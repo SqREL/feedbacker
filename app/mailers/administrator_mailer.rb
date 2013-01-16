@@ -4,6 +4,6 @@ class AdministratorMailer < ActionMailer::Base
 
   def new_message(message)
     @message = message
-    mail(:to => user.email, :subject => "New message")
+    mail(:subject => "New message")
   end
 end
