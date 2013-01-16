@@ -1,5 +1,10 @@
 class FeedbacksController < ApplicationController
+
   before_filter :sign_in, :except => [:new, :create]
+  before_filter(:except => [:index, :show, :new, :edit]) do |controller|
+    try_signing_in if controller.request.format.json?
+  end
+
   # GET /feedbacks
   # GET /feedbacks.json
   def index
@@ -86,6 +91,11 @@ class FeedbacksController < ApplicationController
 
   private
     def sign_in
-      redirect_to signin_path unless current_user
+      redirect_to signin_path unless current_user || (params[:email] && params[:password])
+    end
+
+    def try_signing_in
+      admin = Administrator.find_by_email(params[:email])
+      redirect_to signin_path unless admin && admin.authenticate(params[:password])
     end
 end
